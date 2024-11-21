@@ -147,6 +147,42 @@ worker:
     url: <redis-url>
 ```
 
+### Database Password Configuration
+
+When database passwords contain special characters (common with cloud-managed databases), use one of these approaches:
+
+1. **Direct Password Field (Recommended)**:
+
+```yaml
+api:
+  db:
+    password: 'my!special@password'  # Single quotes
+    # or
+    password: "my!special@password"  # Double quotes
+```
+
+2. **Connection Strings**:
+
+```yaml
+api:
+  db:
+    url: 'postgresql://user:my%21special%40password@host/db' # URL encoded: !->%21, @->%40
+```
+
+**Notes**:
+
+- Always **quote passwords in YAML** to avoid parsing issues with special characters (`:`, `#`, `!`, `@`, `$`).
+- Use **URL encoding** for passwords in connection strings.
+
+**For Production**: Use Kubernetes Secrets to store sensitive credentials securely:
+
+```yaml
+api:
+  db:
+    existingSecret: 'my-db-credentials'
+    existingSecretKey: 'password'
+```
+
 Install the chart:
 
 When specifying the version, be sure to omit the `v` from the github release. So if the current version if `v0.4.38`, specify `0.4.38` as the helm version.
